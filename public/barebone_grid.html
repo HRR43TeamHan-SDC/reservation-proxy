@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <title>opentable</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      .grid-container {
+        display: grid;
+        grid-template-areas: 
+          'header  header header header header'
+          'lgutter left   gap    right  rgutter'
+          'footer  footer footer footer footer';
+        grid-template-columns: 144px 640px 32px 320px auto;
+        grid-gap: 0px;
+      }
+      .grid-header {
+        grid-area: header;
+        height: 368px;
+        background-image: url('images/header.png');
+      }
+      .grid-left-gutter {
+        grid-area : lgutter;
+      }
+      .grid-left {
+        grid-area: left;
+        width: 640px;
+        background-color: burlywood;
+      }
+      .grid-gap {
+        grid-area: gap;
+        width:32px;
+      }
+      .grid-right {
+        grid-area: right;
+        width: 320px;
+        background-color: cornsilk;
+      }
+      .grid-right-gutter {
+        grid-area : rgutter;
+      }
+      .grid-footer {
+        grid-area: footer;
+        height: 795px;
+        background-image: url('images/footer.png');
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-container">
+      <div class="grid-header"></div>
+      <div class="grid-left-gutter"></div>
+      <div class="grid-left">
+        <div class="area-title">
+          Title Area
+        </div>
+        <div class="area-description">
+          Description Area
+        </div>
+        <div class="area-photo">
+          Photo Area
+        </div>
+        <div class="area-menu">
+          Menu Area
+        </div>
+        <div class="area-review">
+          Review Area
+        </div>
+      </div>
+      <div class="grid-gap"></div>
+      <div class="grid-right">
+        <div class="area-reservation">Reservation Area</div>
+      </div>
+      <div class="grid-right-gutter"></div>
+      <div class="grid-footer"></div>
+    </div>
+  </body>
+</html>
