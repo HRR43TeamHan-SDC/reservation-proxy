@@ -1,0 +1,31 @@
+config:
+  target: 'http://localhost:3043'
+  phases:
+    - duration: 60
+      arrivalCount: 6
+    - duration: 60
+      arrivalCount: 60
+    - duration: 60
+      arrivalCount: 600
+    - duration: 60
+      arrivalCount: 6000
+
+  defaults:
+    headers:
+      x-my-service-auth: '987401838271002188298567'
+scenarios:
+  - flow:
+    - get:
+        url: "/9576132"
+    - get:
+        url: "/9142621"
+    - get:
+        url: "/9867867"
+    - get:
+        url: "/9998778"
+    - get:
+        url: "/9095401"
+    - get:
+        url: "/9136632"
+    - get:
+        url: "/9825278"
