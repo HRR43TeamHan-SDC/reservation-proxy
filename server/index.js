@@ -1,4 +1,4 @@
-// require('newrelic');
+require('newrelic');
 const express = require('express');
 const axios = require('axios');
 const { Readable } = require('stream');
@@ -338,7 +338,7 @@ const html =
   </div>
   <script src="http://ec2-54-193-70-33.us-west-1.compute.amazonaws.com:4444/bundle.js"></script>
   <script src="http://sdc.heskett.ninja/bundle.js"></script>
-  <!-- <script src="http://ec2-18-188-10-239.us-east-2.compute.amazonaws.com:3300/bundle.js"></script> -->
+  <script src="http://ec2-18-188-10-239.us-east-2.compute.amazonaws.com:3300/bundle.js"></script>
   <script src="http://ec2-3-133-85-12.us-east-2.compute.amazonaws.com:3009/bundle.js"></script>
 </body>
 </html>`;
@@ -358,10 +358,13 @@ app.get('/images/*', (req, res) => {
 
 // RESERVATION MODULE
 app.get('/api/reservations/:restaurantId/dateTime/:dateTime', (req, res) => {
-  res.redirect(307, `http://ec2-54-193-70-33.us-west-1.compute.amazonaws.com:4444${req.url}`)
+  res.redirect(307, `http://ec2-54-193-70-33.us-west-1.compute.amazonaws.com:4444${req.url}`);
 });
 
-
+// REVIEWS MODULE
+app.get('/api/reviews/:restaurantId', (req, res) => {
+  res.redirect(307, `http://ec2-18-188-10-239.us-east-2.compute.amazonaws.com:3300${req.url}`);
+})
 
 
 // MENU MODULE
