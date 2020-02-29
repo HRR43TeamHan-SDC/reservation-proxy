@@ -1,16 +1,15 @@
 require('newrelic');
+require('dotenv').config()
 const express = require('express');
 const axios = require('axios');
 const { Readable } = require('stream');
 const path = require('path');
 const fs = require('fs');
 const zlib = require('zlib');
-// const morgan = require('morgan');
 
 
 const app = express();
 app.use(express.json());
-// app.use(morgan('dev'));
 
 
 const html =
@@ -323,7 +322,7 @@ const html =
       </div>
       <div class="area-review">
         <br><br>
-        <div id="app">not loaded</div>
+        <div id="reviews">not loaded</div>
       </div>
     </div>
     <div class="grid-gap"></div>
