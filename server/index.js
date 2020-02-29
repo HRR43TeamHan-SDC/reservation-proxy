@@ -5,16 +5,13 @@ const axios = require('axios');
 const app = express();
 app.use(express.json())
 
-const PROXY_PORT = process.env.PROXY_PORT || 8080;
 
-const RESERVATIONS_HOSTNAME = process.env.RESERVATIONS_HOSTNAME || 'localhost';
-const RESERVATIONS_PORT = process.env.RESERVATION_PORT || 4444
 
-html = `
-<html>
-  <head>
-    <title>opentable</title>
-    <style>
+const html =
+`<html>
+<head>
+  <title>opentable</title>
+  <style>
     @font-face {
       font-family: BrandonText;
       src: url("BrandonText-Regular.otf") format("opentype");
@@ -34,7 +31,7 @@ html = `
     .grid-header {
       grid-area: header;
       height: 371px;
-      background-image: url('images/header.webp');
+      background-image: url('/images/header.png');
     }
     .grid-left-gutter {
       grid-area : lgutter;
@@ -57,11 +54,11 @@ html = `
     .grid-footer {
       grid-area: footer;
       height: 795px;
-      background-image: url('images/footer.webp');
+      background-image: url('/images/footer.png');
     }
     .area-description {
       height:255px;
-      background-image: url('images/description.webp');
+      background-image: url('/images/description.png');
       background-repeat: no-repeat;
     }
     .area-menu {
@@ -70,8 +67,6 @@ html = `
     .area-reservation {
       width: 320px;
       height: 320px;
-      background-image: url('https://cnet3.cbsistatic.com/img/_XpU5t4ywu3xYvA4dClTJay1hQA=/644x0/2015/07/07/4eb66f23-8702-46ac-b15f-c61352b41ccd/hansolo2.jpg');
-      background-size: cover;
       color: white;
       text-align: center;
       line-height: 550px;
@@ -81,62 +76,280 @@ html = `
     .area-map {
       width: 320px;
       height: 220px;
-      background-image: url('images/map.webp');
+      background-image: url('/images/map.png');
       margin-top: 20px;
     }
     .area-detail1 {
       width: 320px;
       height: 643px;
-      background-image: url('images/detail1.webp');
+      background-image: url('/images/detail1.png');
       background-repeat: no-repeat;
     }
     .area-detail2 {
       width: 320px;
       height: 182px;
-      background-image: url('images/detail2.webp');
+      background-image: url('/images/detail2.png');
       background-repeat: no-repeat
     }
-    </style>
-  </head>
-  <body>
-    <div class="grid-container">
-      <div class="grid-header"></div>
-      <div class="grid-left-gutter"></div>
-      <div class="grid-left">
-        <div class="area-title"><div id="title">menu module title not loaded</div></div>
-        <div class="area-description"><!-- &nbsp; --></div>
-        <div class="area-photo"><div id="photos">photo module not loaded</div></div>
-        <div class="area-menu"><div id="root">menu module menus not loaded</div></div>
-        <div class="area-review"><br><br><div id="app">review module not loaded</div></div>
+    .pictures {
+      position: relative;
+      width: 100%;
+      padding-top: 46%;
+    }
+    .flex-container {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+    }
+    .gallery-more {
+      background-color: rgba(0,0,0,.5);
+      position: absolute;
+      bottom: 0;
+      right: 2px;
+      color: #ffff;
+      cursor: pointer;
+      width: 15.332%;
+      height: 33.33%;
+      font-family: Arial;
+      font-size: 2em;
+    }
+    .img {
+      padding: 1px;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+    .img1 {
+      width: 23%;
+      height: 50%;
+    }
+    .img2 {
+      width: 46%;
+      height: 100%;
+    }
+    .img3 {
+      width: 15.332%;
+      height: 33.33%;
+    }
+    .img4 {
+      width: 300px;
+      height: 300px;
+    }
+    .circle-image {
+      float: left;
+    }
+    .flag {
+      width: 24px;
+      height: 24px;
+      float: right;
+      vertical-align: middle;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    .show-picture {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.86);
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .hide-picture {
+      display: none;
+    }
+    .show-report {
+      position: fixed;
+      width: 25rem;
+      height: 15rem;
+      top: 50%;
+      left: 50%;
+      background-color: #fff;
+      justify-content: center;
+      align-items: center;
+      z-index: 1050;
+      border-radius: 5px;
+      margin-top: -20px;
+      margin-left: -200px;
+      font-size: 1.25rem;
+      font-family: Arial;
+      text-align: center;
+    }
+    .hide-report {
+      display: none;
+    }
+    .report-button {
+      background-color: #61bddb;
+      color: #fff;
+      font-size: 16px;
+      text-align: center;
+      border-radius: 3px;
+      width: 90%;
+      margin-left: 20px;
+      margin-right: 20px;
+      padding-top: 0.6rem;
+      padding-right: 1.75rem;
+      padding-bottom: 0.6rem;
+      padding-left: 1.75rem;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    #cancel-button {
+      font-size: 16px;
+      text-align: center;
+      width: 90%;
+      margin-left: 20px;
+      margin-right: 20px;
+      padding-top: 0.6rem;
+      padding-right: 1.75rem;
+      padding-bottom: 0.6rem;
+      padding-left: 1.75rem;
+      background-color: #fff;
+      border-color: #fff;
+      color: #2b9abf;
+      border-width: .05rem;
+      cursor: pointer;
+    }
+    .footer {
+      position: relative;
+      margin: 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    .footer-text {
+      float: left;
+      margin: 0 8px 0 0;
+      position: absolute;
+      left: -10px;
+      width: 320px;
+    }
+    .diner-text {
+      color: #ffff;
+      font-family: Arial;
+      margin-left: 3.5em;
+      padding-top: .5em;
+    }
+    .dined-on {
+      padding-top: .3em;
+    }
+    text {
+      display: block;
+      white-space: nowrap;
+      justify-content: center;
+    }
+    #close-picture {
+      position: absolute;
+      top: 20px;
+      right: 0;
+      cursor: pointer;
+      font-size: 20px;
+      color: #91949a;
+      padding: 25px;
+      font-family: sans-serif;
+      box-sizing: border-box;
+    }
+    #right-arrow {
+      top: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      color: #91949a;
+      font-size: 1.2rem;
+      font-family: icons;
+      font-weight: 700;
+      display: inline-block;
+      align-items: flex-start;
+      text-align: center;
+      box-sizing: border-box;
+      padding: 1px 50px 2px;
+    }
+    #left-arrow {
+      top: 50%;
+      left: 0;
+      cursor: pointer;
+      font-size: 20px;
+      color: #91949a;
+      font-family: icons;
+      font-weight: 700;
+      line-height: 1;
+      font-size: 1.2rem;
+      transform: rotate(180deg);
+      display: inline-block;
+      justify-content: space-between;
+      box-sizing: border-box;
+      text-align: center;
+      padding: 1px 50px 2px;
+    }
+    .disabled {
+      pointer-events: none;
+      cursor: default;
+      opacity: 0.6;
+    }
+    .reservation-title, .input-title, .reservation-booked {
+      text-align: left;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-container">
+    <div class="grid-header"></div>
+    <div class="grid-left-gutter"></div>
+    <div class="grid-left">
+      <div class="area-title">
+        <div id="title">not loaded</div>
       </div>
-      <div class="grid-gap"></div>
-      <div class="grid-right">
-        <div class="area-reservation">
-        <div id="reservations">
-        MVP BABY!
+      <div class="area-description">
+        &nbsp;
       </div>
+      <div class="area-photo">
+        <div id="photos">not loaded</div>
       </div>
-        <div class="area-map"></div>
-        <div class="area-detail1"></div>
-        <div class="area-detail2"></div>
+      <div class="area-menu">
+        <div id="root">not loaded</div>
       </div>
-      <div class="grid-right-gutter"></div>
-      <div class="grid-footer"></div>
+      <div class="area-review">
+        <br><br>
+        <div id="app">not loaded</div>
+      </div>
     </div>
-    <script src="http://${RESERVATIONS_HOSTNAME}:${RESERVATIONS_PORT}/bundle.js"></script>
-  </body>
-</html>
-`
+    <div class="grid-gap"></div>
+    <div class="grid-right">
+      <div class="area-reservation"><div id="reservations"></div></div>
+      <div class="area-map"></div>
+      <div class="area-detail1"></div>
+      <div class="area-detail2"></div>
+    </div>
+    <div class="grid-right-gutter"></div>
+    <div class="grid-footer"></div>
+  </div>
+  <script src="http://ec2-54-193-70-33.us-west-1.compute.amazonaws.com:4444/bundle.js"></script>
+  <!-- <script src="http://sdc.heskett.ninja/bundle.js"></script> -->
+  <!-- <script src="http://ec2-18-188-10-239.us-east-2.compute.amazonaws.com:3300/bundle.js"></script> -->
+  <!-- <script src="http://ec2-3-133-85-12.us-east-2.compute.amazonaws.com:3009/bundle.js"></script> -->
+</body>
+</html>`;
 
 // Reservation
 app.get('/api/reservations/:restaurantId/dateTime/:dateTime', (req, res) => {
-  axios.get(`http://${RESERVATIONS_HOSTNAME}:${RESERVATIONS_PORT}/api/reservations/${req.params.restaurantId}/dateTime/${req.params.dateTime}`)
-  .then(response => response.data)
-  .then(data => res.send({data}))
-  .catch(err => console.log('error at proxy serving', err))
-})
+  res.redirect(307, `http://ec2-54-193-70-33.us-west-1.compute.amazonaws.com:4444${req.url}`)
+});
+// app.get('/api/reservations/:restaurantId/dateTime/:dateTime', (req, res) => {
+//   axios.get(`http://${RESERVATIONS_HOSTNAME}:${RESERVATIONS_PORT}/api/reservations/${req.params.restaurantId}/dateTime/${req.params.dateTime}`)
+//   .then(response => response.data)
+//   .then(data => res.send({data}))
+//   .catch(err => console.log('error at proxy serving', err))
+// })
 
-app.use('/:restaurantId', express.static('public'));
+// app.use('/:restaurantId', express.static('public'));
 
 // app.get('/reservations/:restaurantId', (req, res) => {
 //   axios.get(`http://localhost:4444/api/reservations/1/dateTime/2020-02-23%2001:45:00-08`)
@@ -146,8 +359,8 @@ app.use('/:restaurantId', express.static('public'));
 // })
 // app.use('/reservations/?id=:restaurantId', express.static('public'));
 
-// const port = 3043;
+const port = process.env.PORT || 3043;
 
-app.listen(PROXY_PORT, () => {
-  console.log(`App listening on port ${PROXY_PORT}`);
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`);
 });
