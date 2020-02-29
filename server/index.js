@@ -1,10 +1,16 @@
-require('newrelic');
-require('dontenv').config()
+// require('newrelic');
 const express = require('express');
 const axios = require('axios');
-const app = express();
-app.use(express.json())
+const { Readable } = require('stream');
+const path = require('path');
+const fs = require('fs');
+const zlib = require('zlib');
+// const morgan = require('morgan');
 
+
+const app = express();
+app.use(express.json());
+// app.use(morgan('dev'));
 
 
 const html =
@@ -14,7 +20,6 @@ const html =
   <style>
     @font-face {
       font-family: BrandonText;
-      src: url("BrandonText-Regular.otf") format("opentype");
     }
     body {
       margin: 0;
@@ -332,35 +337,173 @@ const html =
     <div class="grid-footer"></div>
   </div>
   <script src="http://ec2-54-193-70-33.us-west-1.compute.amazonaws.com:4444/bundle.js"></script>
-  <!-- <script src="http://sdc.heskett.ninja/bundle.js"></script> -->
+  <script src="http://sdc.heskett.ninja/bundle.js"></script>
   <!-- <script src="http://ec2-18-188-10-239.us-east-2.compute.amazonaws.com:3300/bundle.js"></script> -->
-  <!-- <script src="http://ec2-3-133-85-12.us-east-2.compute.amazonaws.com:3009/bundle.js"></script> -->
+  <script src="http://ec2-3-133-85-12.us-east-2.compute.amazonaws.com:3009/bundle.js"></script>
 </body>
 </html>`;
 
-// Reservation
+
+
+
+// HTML IMAGES
+app.get('/images/*', (req, res) => {
+  const gzip = zlib.createGzip();
+  res.set({ 'Content-Encoding': 'gzip' });
+  fs.createReadStream(path.resolve(__dirname, `../public${req.url}`)).pipe(gzip).pipe(res);
+});
+
+
+
+
+// RESERVATION MODULE
 app.get('/api/reservations/:restaurantId/dateTime/:dateTime', (req, res) => {
   res.redirect(307, `http://ec2-54-193-70-33.us-west-1.compute.amazonaws.com:4444${req.url}`)
 });
-// app.get('/api/reservations/:restaurantId/dateTime/:dateTime', (req, res) => {
-//   axios.get(`http://${RESERVATIONS_HOSTNAME}:${RESERVATIONS_PORT}/api/reservations/${req.params.restaurantId}/dateTime/${req.params.dateTime}`)
+
+
+
+
+// MENU MODULE
+// const MENU_HOSTNAME = process.env.MENU_HOSTNAME || 'localhost';
+// const MENU_PORT = process.env.MENU_PORT || 8001;
+
+app.get('/gettitle/:id', (req, res) => {
+  res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+});
+
+app.get('/getmenu/:id', (req, res) => {
+  res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+});
+
+
+app.post('/api/restaurant', (req, res) => {
+  res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+})
+
+
+// Try to use the following vs all the routes to simplify code
+// app.use('/api/restaurant/:id', (req, res) => {
+//   console.log(req.url);
+//   res.redirect(`http://sdc.heskett.ninja${req.url}`)
+// });
+
+
+app.route('/api/restaurant/:id')
+  .get((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .put((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .delete((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  });
+
+
+app.route('/api/menu/:id')
+  .get((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .post((req, res) => {
+    // Used to post a new section
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .put((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .delete((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  });
+
+
+app.route('/api/section/:id')
+  .get((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .post((req, res) => {
+    // Used to post a new item
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .put((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .delete((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  });
+
+
+app.route('/api/item/:id')
+  .get((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .put((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  })
+  .delete((req, res) => {
+    res.redirect(307, `http://sdc.heskett.ninja${req.url}`);
+  });
+
+
+// app.get('/getmenu/:id', (req, res) => {
+//   axios.get(`http://sdc.heskett.ninja${req.url}`)
 //   .then(response => response.data)
-//   .then(data => res.send({data}))
-//   .catch(err => console.log('error at proxy serving', err))
-// })
+//   .then(data => res.send(data))
+//   .catch(err => console.log('error at proxy serving',err));
+// });
 
-// app.use('/:restaurantId', express.static('public'));
 
-// app.get('/reservations/:restaurantId', (req, res) => {
-//   axios.get(`http://localhost:4444/api/reservations/1/dateTime/2020-02-23%2001:45:00-08`)
-  // .then(response => response.data)
-  // .then(data => res.send({data}))
-  // .catch(err => console.log('error at proxy serving', err))
-// })
-// app.use('/reservations/?id=:restaurantId', express.static('public'));
 
-const port = process.env.PORT || 3043;
 
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
+// PHOTO GALLERY MODULE
+app.get('/api/photos/:id', (req, res) => {
+  // res.redirect(`http://ec2-3-133-85-12.us-east-2.compute.amazonaws.com:3009/api/photos/${req.params.id}`);
+  axios.get(`http://ec2-3-133-85-12.us-east-2.compute.amazonaws.com:3009/api/photos/${req.params.id}`)
+    .then((response) => {
+  //     const stream = new Readable({
+  //       read() {
+  //         this.push(JSON.stringify(response.data));
+  //         this.push(null);
+  //       },
+  //     });
+  //     stream.pipe(res);
+      res.send(response.data);
+    })
+    .catch((err) => res.send(err));
+});
+
+app.post('/api/photos', (req, res) => {
+  // res.redirect(307, `http://ec2-3-133-85-12.us-east-2.compute.amazonaws.com:3009/api/photos`);
+  axios.post(`http://ec2-3-133-85-12.us-east-2.compute.amazonaws.com:3009/api/photos`, req.body)
+    .then((response) => res.send(response))
+    .catch((err) => res.send(err));
+});
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+// app.use(express.static('public'));
+// app.use('/loaderio*', express.static(path.resolve(__dirname, '../loaderio.txt')));
+// // app.use('/:id', express.static('public'));
+app.use('/:id', (req, res) => {
+  const gzip = zlib.createGzip();
+  res.set({ 'Content-Encoding': 'gzip' });
+
+  const stream = new Readable({
+    read() {
+      this.push(html, 'utf8');
+      this.push(null);
+    },
+  });
+
+  stream.pipe(gzip).pipe(res);
+  // res.send(html);
+});
+
+
+const PORT = process.env.PORT || 3043;
+app.listen(PORT, () => {
+  console.log(`Proxy listening on port ${PORT}`);
 });
