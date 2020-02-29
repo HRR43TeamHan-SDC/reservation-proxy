@@ -488,7 +488,7 @@ app.post('/api/photos', (req, res) => {
 
 
 // app.use(express.static('public'));
-// app.use('/loaderio*', express.static(path.resolve(__dirname, '../loaderio.txt')));
+app.use('/loaderio*', express.static(path.resolve(__dirname, '../loaderio.txt')));
 // // app.use('/:id', express.static('public'));
 app.use('/:id', (req, res) => {
   const gzip = zlib.createGzip();
